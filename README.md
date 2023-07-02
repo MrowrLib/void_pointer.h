@@ -56,7 +56,7 @@ target_link_libraries(Example PRIVATE void_pointer::void_pointer)
 
 ```json
 {
-    "dependencies": ["mrowr-dependency-injection"]
+    "dependencies": ["mrowr-void-pointer"]
 }
 ```
 
@@ -73,8 +73,8 @@ target_link_libraries(Example PRIVATE void_pointer::void_pointer)
         {
             "kind": "git",
             "repository": "https://github.com/MrowrLib/Packages.git",
-            "baseline": "0e9c7ad01ab81bb4f381360a9726bbe6c77e4865",
-            "packages": ["mrowr-dependency-injection"]
+            "baseline": "90c22863a5a6b0a746bb030026e851446d33fd96",
+            "packages": ["mrowr-void-pointer"]
         }
     ]
 }
