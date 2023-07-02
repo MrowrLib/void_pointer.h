@@ -124,7 +124,7 @@ std::unique_ptr<IVoidPointer> voidPointer =
 ```cpp
 // If you want a raw pointer instead of a std::unique_ptr
 IVoidPointer* voidPointer =
-    new_void_pointer(somePointer).get();
+    new_void_pointer(somePointer);
 
 // This is shorthand for:
 IVoidPointer* voidPointer =
