@@ -27,4 +27,10 @@ int main() {
 
     _Log_("Deleting ptr, should delete the underlying ptr");
     voidPtr.reset();
+
+    // Or use a raw IVoidPointer*
+    IVoidPointer* rawVoidPtr = new_void_pointer(new DeleteMe(3));
+
+    // Let's do a normal delete of it
+    delete rawVoidPtr;
 }

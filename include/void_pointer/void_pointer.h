@@ -6,7 +6,12 @@
 namespace VoidPointers {
 
     template <typename T>
-    VoidPointer make_void_pointer(T* pointer) {
+    IVoidPointer* new_void_pointer(T* pointer) {
+        return new VoidPointerBase<T>(pointer);
+    }
+
+    template <typename T>
+    VoidPointer unique_void_pointer(T* pointer) {
         return VoidPointer(new VoidPointerBase<T>(pointer));
     }
 }
