@@ -114,7 +114,7 @@ Something* somePointer = new Something();
 VoidPointer voidPointer = void_pointer(somePointer);
 
 // This is shorthand for:
-std::unique_ptr<IVoidPointer> voidPointer = VoidPointers::make_void_pointer(somePointer);
+std::unique_ptr<IVoidPointer> voidPointer = VoidPointers::unique_void_pointer(somePointer);
 
 // Because the VoidPointer is a unique_ptr, it will automatically
 // delete the Something* when it goes out of scope
@@ -125,7 +125,7 @@ std::unique_ptr<IVoidPointer> voidPointer = VoidPointers::make_void_pointer(some
 IVoidPointer* voidPointer = new_void_pointer(somePointer);
 
 // This is shorthand for:
-IVoidPointer* voidPointer = VoidPointers::make_void_pointer(somePointer).release();
+IVoidPointer* voidPointer = VoidPointers::new_void_pointer(somePointer).release();
 
 // It will automatically delete the Something* when explicitly deleted:
 delete voidPointer;
