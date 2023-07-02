@@ -125,7 +125,7 @@ std::unique_ptr<IVoidPointer> voidPointer = VoidPointers::unique_void_pointer(so
 IVoidPointer* voidPointer = new_void_pointer(somePointer);
 
 // This is shorthand for:
-IVoidPointer* voidPointer = VoidPointers::new_void_pointer(somePointer).release();
+IVoidPointer* voidPointer = VoidPointers::new_void_pointer(somePointer);
 
 // It will automatically delete the Something* when explicitly deleted:
 delete voidPointer;
