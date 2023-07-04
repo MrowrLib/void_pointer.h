@@ -11,10 +11,10 @@ void Example() {
     VoidPointer voidPointer = void_pointer(somePointer);
 
     // Get the void*
-    void* ptr = voidPointer.pointer();
+    void* ptr = voidPointer->pointer();
 
     // Or cast it back to a known type
-    Something* thing = voidPointer.as<Something>();
+    Something* thing = voidPointer->as<Something>();
 
     // VoidPointer is a std::unique_ptr so it will automatically
     // delete the Something* when it goes out of scope AND it
@@ -133,10 +133,10 @@ delete voidPointer;
 
 ```cpp
 // Get the void*
-void* ptr = voidPointer.pointer();
+void* ptr = voidPointer->pointer();
 
 // Or cast it back to a known type
-Something* thing = voidPointer.as<Something>();
+Something* thing = voidPointer->as<Something>();
 ```
 
 ```cpp
