@@ -11,7 +11,7 @@ void Example() {
     VoidPointer voidPointer = void_pointer(somePointer);
 
     // Get the void*
-    void* ptr = voidPointer.void_pointer();
+    void* ptr = voidPointer.pointer();
 
     // Or cast it back to a known type
     Something* thing = voidPointer.as<Something>();
@@ -136,7 +136,7 @@ delete voidPointer;
 
 ```cpp
 // Get the void*
-void* ptr = voidPointer.void_pointer();
+void* ptr = voidPointer.pointer();
 
 // Or cast it back to a known type
 Something* thing = voidPointer.as<Something>();

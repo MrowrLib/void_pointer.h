@@ -18,7 +18,7 @@ namespace VoidPointers {
         VoidPointerBase(T* pointer) : _pointer(pointer) {}
         ~VoidPointerBase() override = default;
 
-        void* void_pointer() const override { return _pointer.get(); }
+        void* pointer() const override { return _pointer.get(); }
         void  set_destruct_on_delete(bool destruct_on_delete) override {
             _pointer.get_deleter().set_deletes_pointer(destruct_on_delete);
         }
