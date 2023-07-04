@@ -14,7 +14,7 @@ int main() {
     // Create a void pointer from a raw pointer
     VoidPointer voidPtr = void_pointer(new DeleteMe(1));
 
-    _Log_("The pointer address is: 0x{:x}", reinterpret_cast<uintptr_t>(voidPtr->pointer()));
+    _Log_("The pointer address is: 0x{:x}", reinterpret_cast<uintptr_t>(voidPtr->void_ptr()));
 
     _Log_("Getting type from ptr");
     auto* ptr = voidPtr->as<DeleteMe>();

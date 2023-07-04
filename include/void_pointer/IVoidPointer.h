@@ -5,7 +5,7 @@ namespace VoidPointers {
     struct IVoidPointer {
         virtual ~IVoidPointer() = default;
 
-        virtual void* pointer() const                                        = 0;
+        virtual void* void_ptr() const                                       = 0;
         virtual void  set_destruct_on_delete(bool destruct_on_delete = true) = 0;
         virtual void  disable_destruct_on_delete()                           = 0;
         virtual void  enable_destruct_on_delete()                            = 0;
@@ -13,7 +13,7 @@ namespace VoidPointers {
 
         template <typename T>
         T* as() const {
-            auto* ptr = pointer();
+            auto* ptr = void_ptr();
             if (!ptr) return nullptr;
             return static_cast<T*>(ptr);
         }
