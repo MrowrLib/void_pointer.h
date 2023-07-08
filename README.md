@@ -7,18 +7,21 @@ void Example() {
     // Given a pointer to a known type...
     Something* somePointer = new Something();
 
-    // Store it as a void*
-    VoidPointer voidPointer = void_pointer(somePointer);
+    // Wrap it in a VoidPointer
+    VoidPointer<Something> voidPointer(somePointer);
 
     // Get the void*
     void* ptr = voidPointer->void_ptr();
 
-    // Or cast it back to a known type
+    // Cast it back to a known type
     Something* thing = voidPointer->as<Something>();
 
-    // VoidPointer is a std::unique_ptr so it will automatically
-    // delete the Something* when it goes out of scope AND it
-    // knows how to call the destructor of the type it was created from.
+    // Store the VoidPointer as an IVoidPointer* (type erasure)
+    // You can store void poiners of different types in the same container
+    IVoidPointer* iVoidPointer = voidPointer;
+
+    // When voidPointer goes out of scope,
+    // it will automatically delete the Something*
 }
 ```
 
@@ -111,21 +114,14 @@ Something* somePointer = new Something();
 
 ```cpp
 // Store it as a VoidPointer
-VoidPointer voidPointer = void_pointer(somePointer);
+VoidPointer voidPointer(somePointer);
 
-// This is shorthand for:
-std::unique_ptr<IVoidPointer> voidPointer = VoidPointers::unique_void_pointer(somePointer);
-
-// Because the VoidPointer is a unique_ptr, it will automatically
-// delete the Something* when it goes out of scope
+// It will automatically delete the Something* when it goes out of scope
 ```
 
 ```cpp
-// If you want a raw pointer instead of a std::unique_ptr
-IVoidPointer* voidPointer = new_void_pointer(somePointer);
-
-// This is shorthand for:
-IVoidPointer* voidPointer = VoidPointers::new_void_pointer(somePointer);
+// If you want a IVoidPointer* pointer instead:
+IVoidPointer* voidPointer = new VoidPointer(somePointer);
 
 // It will automatically delete the Something* when explicitly deleted:
 delete voidPointer;
