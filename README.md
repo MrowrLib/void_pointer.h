@@ -76,7 +76,7 @@ target_link_libraries(Example PRIVATE void_pointer::void_pointer)
         {
             "kind": "git",
             "repository": "https://github.com/MrowrLib/Packages.git",
-            "baseline": "5c88ca85d1fe5dd0295e5b97540d79987044208f",
+            "baseline": "c2e473f9414643028f225a17245d9e5a8db3af52",
             "packages": ["mrowr-void-pointer"]
         }
     ]
