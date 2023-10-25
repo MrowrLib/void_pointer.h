@@ -8,7 +8,7 @@ namespace VoidPointers {
 
     public:
         void set_deletes_pointer(bool deletesPointer = true) { _deletesPointer = deletesPointer; }
-        bool deletes_pointer() const { return _deletesPointer; }
+        bool get_deletes_pointer() const { return _deletesPointer; }
 
         void operator()(void* ptr) const {
             if (_deletesPointer) {

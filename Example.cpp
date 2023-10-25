@@ -23,7 +23,7 @@ int main() {
     _Log_("ID:{}", ptr->get_id());
 
     _Log_("Deleting ptr, shouldn't delete the underlying ptr");
-    voidPtr->disable_destruct_on_delete();
+    voidPtr->delete_rule()->set_destruct_on_delete(false);
     voidPtr.reset();
 
     // Make a new one which should delete underlying (default behavior)

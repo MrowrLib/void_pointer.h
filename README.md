@@ -137,13 +137,18 @@ Something* thing = voidPointer->as<Something>();
 
 ```cpp
 // To disable memory management:
-voidPointer->disable_destruct_on_delete();
+voidPointer->delete_rule()->disable_destruct_on_delete();
 
 // This will prevent the VoidPointer from calling the destructor
 // of the underlying pointer.
 
 // To re-enable it:
-voidPointer->enable_destruct_on_delete();
+voidPointer->delete_rule()->enable_destruct_on_delete();
+
+// And you can check:
+if (voidPointer->delete_rule()->destruct_on_delete()) {
+    // ...
+}
 ```
 
 ## License
