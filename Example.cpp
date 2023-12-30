@@ -19,7 +19,7 @@ int main() {
     _Log_("The pointer address is: 0x{:x}", reinterpret_cast<uintptr_t>(voidPtr->void_ptr()));
 
     _Log_("Getting type from ptr");
-    auto* ptr = voidPtr->as<DeleteMe>();
+    auto* ptr = voidPtr->as<DeleteMe*>();
     _Log_("ID:{}", ptr->get_id());
 
     _Log_("Deleting ptr, shouldn't delete the underlying ptr");
@@ -39,9 +39,14 @@ int main() {
     VoidPointer another(new DeleteMe(69));
 
     IVoidPointer* interface = &another;
-    _Log_("ID: {}", interface->as<DeleteMe>()->get_id());
+    _Log_("ID: {}", interface->as<DeleteMe*>()->get_id());
 
     IVoidPointer* newInterface = new VoidPointer(new DeleteMe(420));
-    _Log_("ID: {}", newInterface->as<DeleteMe>()->get_id());
+    _Log_("ID: {}", newInterface->as<DeleteMe*>()->get_id());
     delete newInterface;
+
+    // Store a simple value and get a T (dereferenced)
+    VoidPointer<int> intPtr(new int(69));
+    int              value = intPtr.as<int>();
+    _Log_("Value: {}", value);
 }

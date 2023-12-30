@@ -14,7 +14,10 @@ void Example() {
     void* ptr = voidPointer->void_ptr();
 
     // Cast it back to a known type
-    Something* thing = voidPointer->as<Something>();
+    Something* thing = voidPointer->as<Something*>();
+
+    // It'll be dereferenced into a concrete type if as<T> is not a pointer
+    Something thingRef = voidPointer->as<Something>();
 
     // Store the VoidPointer as an IVoidPointer* (type erasure)
     // You can store void poiners of different types in the same container
