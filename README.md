@@ -4,33 +4,50 @@
 #include <void_pointer.h>
 
 void Example() {
-    // Given a pointer to a known type...
-    Something* somePointer = new Something();
+    // Create some void* which know how to delete themselves
+    void_ptr rover   = make_void<Dog>("Rover");
+    void_ptr mittens = make_void<Cat>("Mittens");
 
-    // Wrap it in a VoidPointer
-    VoidPointer<Something> voidPointer(somePointer);
+    // Their types are erased, so feel free to store
+    // them together in a container
+    std::vector<void_ptr> pets;
+    pets.emplace_back(std::move(rover));
+    pets.emplace_back(std::move(mittens));
 
-    // Get the void*
-    void* ptr = voidPointer->void_ptr();
-
-    // Cast it back to a known type
-    Something* thing = voidPointer->as<Something*>();
-
-    // It'll be dereferenced into a concrete type if as<T> is not a pointer
-    Something thingRef = voidPointer->as<Something>();
-
-    // Store the VoidPointer as an IVoidPointer* (type erasure)
-    // You can store void poiners of different types in the same container
-    IVoidPointer* iVoidPointer = voidPointer;
-
-    // When voidPointer goes out of scope,
-    // it will automatically delete the Something*
+    // Cast them back to their original type
+    Dog* rover_ptr   = pets[0]->as<Dog*>();
+    Cat* mittens_ptr = pets[1]->as<Cat*>();
 }
 ```
 
 ## What?
 
 A `void*` that knows how to delete itself.
+
+## Table of Contents
+
+- [`#include <void_pointer.h>`](#include-void_pointerh)
+  - [What?](#what)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [xmake](#xmake)
+      - [`xmake.lua`](#xmakelua)
+    - [vcpkg](#vcpkg)
+      - [`CMakeLists.txt`](#cmakeliststxt)
+      - [`vcpkg.json`](#vcpkgjson)
+      - [`vcpkg-configuration.json`](#vcpkg-configurationjson)
+  - [Why?](#why)
+  - [How?](#how)
+  - [Types](#types)
+    - [`void_ptr`](#void_ptr)
+      - [`make_void()`](#make_void)
+      - [`make_void_ptr()`](#make_void_ptr)
+    - [`void_ptr_raw`](#void_ptr_raw)
+      - [`make_raw_void()`](#make_raw_void)
+      - [`make_raw_void_ptr()`](#make_raw_void_ptr)
+  - [Memory Management / Ownership](#memory-management--ownership)
+  - [License](#license)
+
 
 ## Installation
 
@@ -106,52 +123,127 @@ You must know the type of the pointer when you create it, but after that you can
 
 ## How?
 
+The latest version of `<void_pointer.h>` is is a thin wrapper around `<managed_pointer.h>`.
+
+> **`<managed_pointer.h>`**
+>
+> https://github.com/MrowrLib/managed_pointer.h
+
+The `managed_pointer` library offers a pointer which provides:
+
+- Type-erasure
+  - (_e.g. to easily store any kind of pointers in the same container_)
+- Configuring the ownership of each pointer
+  - (_i.e. if the pointer should `delete` its internal pointer when it is destroyed_)
+
+## Types
+
+### `void_ptr`
+
+The `void_ptr` type is shorthand for:
+
 ```cpp
-#include <void_pointer.h>
+std::unique_ptr<ManagedPointer::untyped_managed_ptr_impl>
 ```
 
+The `untyped_managed_ptr_impl` type is the untyped base class for every `managed_ptr`.
+
+It provides the type-erasure and ownership configuration features.
+
+> Note that it is a `unique_ptr` which means that:
+>
+> - It cannot be copied, it must be moved
+> - It will be automatically deleted when it goes out of scope
+>   - This will `delete` its internal pointer (_unless you configure it otherwise_)
+
+#### `make_void()`
+
+Helper for creating `void_ptr` instances.
+
+It constructs a `new T`.
+
 ```cpp
-// Given a pointer to a known type...
-Something* somePointer = new Something();
+void_ptr dog = make_void<Dog>("Rover");
 ```
 
-```cpp
-// Store it as a VoidPointer
-VoidPointer voidPointer(somePointer);
+#### `make_void_ptr()`
 
-// It will automatically delete the Something* when it goes out of scope
+Helper for creating `void_ptr` instances from an existing pointer.
+
+```cpp
+void_ptr dog = make_void_ptr(new Dog("Rover"));
 ```
 
-```cpp
-// If you want a IVoidPointer* pointer instead:
-IVoidPointer* voidPointer = new VoidPointer(somePointer);
+### `void_ptr_raw`
 
-// It will automatically delete the Something* when explicitly deleted:
-delete voidPointer;
+The `void_ptr_raw` type is shorthand for:
+
+```cpp
+ManagedPointer::untyped_managed_ptr_impl*;
 ```
 
-```cpp
-// Get the void*
-void* ptr = voidPointer->void_ptr();
+The `untyped_managed_ptr_impl` type is the untyped base class for every `managed_ptr`.
 
-// Or cast it back to a known type
-Something* thing = voidPointer->as<Something>();
+The `void_ptr_raw` type is the raw pointer version of `void_ptr`.
+
+> Note that it is a raw pointer which means that:
+>
+> - It can be copied
+> - It will **not** be automatically deleted when it goes out of scope
+> - You must explicitly `delete` it when desired
+>   - This will `delete` its internal pointer (_unless you configure it otherwise_)
+
+#### `make_raw_void()`
+
+Helper for creating `void_ptr_raw` instances.
+
+It constructs a `new T`.
+
+```cpp
+void_ptr_raw dog = make_raw_void<Dog>("Rover");
 ```
 
+#### `make_raw_void_ptr()`
+
+Helper for creating `void_ptr_raw` instances from an existing pointer.
+
 ```cpp
-// To disable memory management:
-voidPointer->delete_rule()->disable_destruct_on_delete();
+void_ptr_raw dog = make_raw_void_ptr(new Dog("Rover"));
+```
 
-// This will prevent the VoidPointer from calling the destructor
-// of the underlying pointer.
+## Memory Management / Ownership
 
-// To re-enable it:
-voidPointer->delete_rule()->enable_destruct_on_delete();
+For the full memory management interface, see `<managed_pointer.h>`:
 
-// And you can check:
-if (voidPointer->delete_rule()->destruct_on_delete()) {
-    // ...
-}
+- https://github.com/MrowrLib/managed_pointer.h
+
+By default, every `void_ptr` and `void_ptr_raw` will `delete` their internal pointer when they are destroyed.
+
+This can be disabled:
+
+```cpp
+void_ptr dog = make_void<Dog>("Rover");
+
+// Disable automatic deletion
+dog->disable_delete();
+```
+
+Here is an overview of the available functions:
+
+```cpp
+void_ptr dog = make_void<Dog>("Rover");
+
+// Disable automatic deletion
+dog->disable_delete();
+
+// Enable automatic deletion
+dog->enable_delete();
+
+// Explicitly configure automatic deletion
+dog->set_deletes_pointer(true);
+
+// Check if automatic deletion is enabled
+bool deletes_pointer = dog->deletes_pointer();
 ```
 
 ## License

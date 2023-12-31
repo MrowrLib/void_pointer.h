@@ -1,52 +1,51 @@
-#include <_Log_.h>
 #include <void_pointer.h>
 
-#include <memory>
+#include <iostream>
+#include <string>
+#include <vector>
 
-class DeleteMe {
-    int id;
+class Dog {
+    std::string _name;
 
 public:
-    DeleteMe(int id) : id(id) {}
-    ~DeleteMe() { _Log_("DeleteMe::~DeleteMe ID:{}", id); }
-    int get_id() const { return id; }
+    Dog(std::string name) : _name(std::move(name)) {
+        std::cout << "Dog " << _name << " created" << std::endl;
+    }
+    ~Dog() { std::cout << "Dog " << _name << " destroyed" << std::endl; }
+    std::string name() const { return _name; }
 };
 
+class CollectionOfPointers {
+    std::vector<void_ptr> pointers;
+
+public:
+    void add(void_ptr ptr) { pointers.emplace_back(std::move(ptr)); }
+    void clear() { pointers.clear(); }
+};
+
+void print(const std::string& text) { std::cout << text << std::endl; }
+
 int main() {
-    // Create a void pointer from a raw pointer
-    auto voidPtr = std::make_unique<VoidPointer<DeleteMe>>(new DeleteMe(1));
+    auto dontDeleteMe = make_void<Dog>("Spot");
+    dontDeleteMe->disable_delete();
 
-    _Log_("The pointer address is: 0x{:x}", reinterpret_cast<uintptr_t>(voidPtr->void_ptr()));
+    auto dog    = new Dog("Rex");
+    auto dogPtr = make_void_ptr(dog);
+    print("Created void_ptr with dog named " + dogPtr->as<Dog*>()->name());
 
-    _Log_("Getting type from ptr");
-    auto* ptr = voidPtr->as<DeleteMe*>();
-    _Log_("ID:{}", ptr->get_id());
+    print("Creating collection...");
+    auto* collection = new CollectionOfPointers;
+    collection->add(make_void<Dog>("Fido"));
+    collection->add(make_void<Dog>("Rover"));
+    collection->add(std::move(dontDeleteMe));
 
-    _Log_("Deleting ptr, shouldn't delete the underlying ptr");
-    voidPtr->delete_rule()->set_destruct_on_delete(false);
-    voidPtr.reset();
+    print("Deleting collection...");
+    delete collection;
+    print("Collection deleted");
 
-    // Make a new one which should delete underlying (default behavior)
-    _Log_("Deleting ptr, should delete the underlying ptr");
-    voidPtr.reset(new VoidPointer(new DeleteMe(2)));
+    void_ptr_raw rawPtr = make_raw_void<Dog>("Snoopy");
+    print("Created raw void_ptr with dog named " + rawPtr->as<Dog*>()->name());
 
-    // Or use a raw IVoidPointer*
-    IVoidPointer* rawVoidPtr = new VoidPointer(new DeleteMe(3));
-
-    // Let's do a normal delete of it
-    delete rawVoidPtr;
-
-    VoidPointer another(new DeleteMe(69));
-
-    IVoidPointer* interface = &another;
-    _Log_("ID: {}", interface->as<DeleteMe*>()->get_id());
-
-    IVoidPointer* newInterface = new VoidPointer(new DeleteMe(420));
-    _Log_("ID: {}", newInterface->as<DeleteMe*>()->get_id());
-    delete newInterface;
-
-    // Store a simple value and get a T (dereferenced)
-    VoidPointer<int> intPtr(new int(69));
-    int              value = intPtr.as<int>();
-    _Log_("Value: {}", value);
+    void_ptr_raw rawPtr2 = make_raw_void_ptr<Dog>(new Dog("Lassie"));
+    print("Created raw void_ptr with dog named " + rawPtr2->as<Dog*>()->name());
 }
